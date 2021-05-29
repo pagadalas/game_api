@@ -3,6 +3,7 @@ package com.rmed.game.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @Api(value = "Game Api, compete with the computer ")
 @RequestMapping(path="/game/v1/")
+@Validated
 public class GameController {
 
 	private GameService gameService;
@@ -38,11 +40,9 @@ public class GameController {
         @ApiResponses(value = {
                 @ApiResponse(code = 200, message = "Successfully played a game with Game App"),
                 @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-                @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
                 @ApiResponse(code = 404, message = "Player is Not Found")
         })
     public GameRoundResponse play(@RequestBody GameRequest gameRequest) {    	   		
-    	gameService.validateGameRequest(gameRequest);    	
     	return gameService.play(gameRequest);
     }
     
@@ -51,11 +51,10 @@ public class GameController {
         @ApiResponses(value = {
                 @ApiResponse(code = 200, message = "Successfully retrieved list"),
                 @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-                @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
                 @ApiResponse(code = 404, message = "Requested Resource Not Found")
         })
     public  List<PlayerResponse> getPlayers() {
-    	return gameService.getPlayers();
+    	return gameService.getAllPlayers();
     }
     
     @GetMapping("/players/stats")
@@ -63,11 +62,10 @@ public class GameController {
         @ApiResponses(value = {
                 @ApiResponse(code = 200, message = "Successfully retrieved list"),
                 @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-                @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
                 @ApiResponse(code = 404, message = "Requested Resource Not Found")
         })
     public  List<PlayerStatResponse> getPlayerStats() {
-    	return gameService.getPlayesStats();
+    	return gameService.getAllPlayersGameStats();
     }
 
     @GetMapping("/players/{player}/stats")
@@ -75,11 +73,10 @@ public class GameController {
         @ApiResponses(value = {
                 @ApiResponse(code = 200, message = "Successfully retrieved list"),
                 @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-                @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
                 @ApiResponse(code = 404, message = "Requested Resource Not Found")
         })
     public  PlayerStatResponse getPlayerDetails(@PathVariable("player") String player) {
-    	return gameService.getPlayesGameDetails(player);
+    	return gameService.getPlayerGameStats(player);
     }
 
 }

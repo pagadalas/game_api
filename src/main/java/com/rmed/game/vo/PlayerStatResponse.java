@@ -40,7 +40,9 @@ public class PlayerStatResponse {
 	public void setDraws(Integer draws) {
 		this.draws = draws;
 	}
-	
+
+	public PlayerStatResponse() {}
+
 	public PlayerStatResponse(String name, int size, Long wins, Long losts, Long ties) {
 		this.playerName = name;
 		this.totalGames = size;

@@ -32,24 +32,24 @@ public class GameServiceImpl implements GameService {
 
 
 	@Override
-	public GameRoundResponse play(GameRequest game) {
-		Player player = playerRepo.findByName(game.getPlayerName().toUpperCase());
+	public GameRoundResponse play(GameRequest gameRequest) {
+		validateGameRequest(gameRequest);
+		Player player = playerRepo.findByName(gameRequest.getPlayerName().toUpperCase());
 		GameRoundResponse response = null;
 		if(player == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid input, player not found");			
 		}
 		else {
 			GameShapesEnum applicationShape =  helper.getRandomShape();
-			GameStatusEnum status = helper.determineWinner(helper.getGameShapeForString(game.getPlayerSymbol()).get(), applicationShape);			
-			player.getGameRounds().add(buildGameRound(game.getPlayerSymbol(), applicationShape.name(), status, player));
+			GameStatusEnum status = helper.determineWinner(helper.getGameShapeForString(gameRequest.getPlayerSymbol()).get(), applicationShape);
+			player.getGameRounds().add(buildGameRound(gameRequest.getPlayerSymbol(), applicationShape.name(), status, player));
 			playerRepo.save(player);
-			response = buildGameResponse(game.getPlayerSymbol(), applicationShape.name(), status.name(), game.getPlayerName() );
+			response = buildGameResponse(gameRequest.getPlayerSymbol(), applicationShape.name(), status.name(), gameRequest.getPlayerName() );
 		}
 		return response; 
 	}
 
-	@Override
-	public Boolean validateGameRequest(GameRequest req) {
+	private Boolean validateGameRequest(GameRequest req) {
 		if(req == null || req.getPlayerName() == null || req.getPlayerSymbol() == null ||
 				!helper.getGameShapeForString(req.getPlayerSymbol()).isPresent()) {			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input");					
@@ -58,20 +58,20 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public List<PlayerResponse> getPlayers() {
+	public List<PlayerResponse> getAllPlayers() {
 		List<Player> players = playerRepo.findAll();
 		return players.stream().map(s -> new PlayerResponse(s.getName(), s.getGameRounds().size())).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<PlayerStatResponse> getPlayesStats() {
+	public List<PlayerStatResponse> getAllPlayersGameStats() {
 		List<Player> players = playerRepo.findAll();
 		return players.stream().map(s -> convertPlayerStats(s)).collect(Collectors.toList());
 	}
 
 	
 	@Override
-	public PlayerStatResponse getPlayesGameDetails(String player) {
+	public PlayerStatResponse getPlayerGameStats(String player) {
 		if(player == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input");			
 		}

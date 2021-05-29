@@ -10,13 +10,11 @@ import com.rmed.game.vo.PlayerStatResponse;
 public interface GameService {
 
 	GameRoundResponse play(GameRequest game);
-	
-	Boolean validateGameRequest(GameRequest game);
 
-	List<PlayerResponse> getPlayers();
+	List<PlayerResponse> getAllPlayers();
 
-	List<PlayerStatResponse> getPlayesStats();
+	List<PlayerStatResponse> getAllPlayersGameStats();
 
-	PlayerStatResponse getPlayesGameDetails(String player);
+	PlayerStatResponse getPlayerGameStats(String playerName);
 	
 }
