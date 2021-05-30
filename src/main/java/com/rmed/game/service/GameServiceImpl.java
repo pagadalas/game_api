@@ -21,6 +21,9 @@ import com.rmed.game.vo.GameRoundResponse;
 import com.rmed.game.vo.PlayerResponse;
 import com.rmed.game.vo.PlayerStatResponse;
 
+/**
+ * This class provides the implementation of operations of GameService
+ */
 @Service
 public class GameServiceImpl implements GameService {
 
@@ -30,7 +33,15 @@ public class GameServiceImpl implements GameService {
 	@Autowired
 	private GameHelper helper;
 
-
+	/**
+	 * This method is called for playing game with the application
+	 * This will validate the request, if failed throws exception
+	 * This fetch the player based on the name
+	 * This will fetch the system symbol
+	 * computes the winner
+	 * @param gameRequest
+	 * @return
+	 */
 	@Override
 	public GameRoundResponse play(GameRequest gameRequest) {
 		validateGameRequest(gameRequest);
@@ -49,6 +60,11 @@ public class GameServiceImpl implements GameService {
 		return response; 
 	}
 
+	/**
+	 * method to validate the user inputs
+	 * @param req
+	 * @return
+	 */
 	private Boolean validateGameRequest(GameRequest req) {
 		if(req == null || req.getPlayerName() == null || req.getPlayerSymbol() == null ||
 				!helper.getGameShapeForString(req.getPlayerSymbol()).isPresent()) {			
@@ -57,19 +73,31 @@ public class GameServiceImpl implements GameService {
 		return true;
 	}
 
+	/**
+	 * This method is used to bring all the available players in the db
+	 * @return
+	 */
 	@Override
 	public List<PlayerResponse> getAllPlayers() {
 		List<Player> players = playerRepo.findAll();
 		return players.stream().map(s -> new PlayerResponse(s.getName(), s.getGameRounds().size())).collect(Collectors.toList());
 	}
 
+	/**
+	 * This method fetches all the players game statistics
+	 * @return
+	 */
 	@Override
 	public List<PlayerStatResponse> getAllPlayersGameStats() {
 		List<Player> players = playerRepo.findAll();
 		return players.stream().map(s -> convertPlayerStats(s)).collect(Collectors.toList());
 	}
 
-	
+	/**
+	 * This method provides the functionality of providing game statistics of a specific player
+	 * @param player
+	 * @return
+	 */
 	@Override
 	public PlayerStatResponse getPlayerGameStats(String player) {
 		if(player == null) {
@@ -83,7 +111,11 @@ public class GameServiceImpl implements GameService {
 		}
 	}
 
-	
+	/**
+	 * utility method to convert to PlayerStatResponse object from the player object
+	 * @param s
+	 * @return
+	 */
 	private PlayerStatResponse convertPlayerStats(Player s) {
 		Map<String, Long> stats = s.getGameRounds().stream().collect(Collectors.groupingBy(GameRound::getStatus, Collectors.counting()));
 		return new PlayerStatResponse(s.getName(), s.getGameRounds().size(), stats.getOrDefault(GameStatusEnum.WIN.name(), 0L)
@@ -91,6 +123,14 @@ public class GameServiceImpl implements GameService {
 				, stats.getOrDefault(GameStatusEnum.TIE.name(), 0L));
 	}
 
+	/**
+	 * utitlity method to create a GameRound object
+	 * @param playerShape
+	 * @param applicationShape
+	 * @param status
+	 * @param player
+	 * @return
+	 */
 	private GameRound buildGameRound(String playerShape, String applicationShape, GameStatusEnum status, Player player ) {
 		GameRound round  = new GameRound();
 		round.setAppShape(applicationShape);
@@ -100,8 +140,15 @@ public class GameServiceImpl implements GameService {
 		round.setStatus(status.name());
 		return round;
 	}
-
-
+	
+	/**
+	 * Utiltity method to create GameRoundResponse object
+	 * @param playerShape
+	 * @param appShape
+	 * @param status
+	 * @param playerName
+	 * @return
+	 */
 	private GameRoundResponse buildGameResponse(String playerShape, String appShape, String status, String playerName) {
 		GameRoundResponse resp = new GameRoundResponse();
 		resp.setName(playerName);
@@ -110,5 +157,4 @@ public class GameServiceImpl implements GameService {
 		resp.setPlayerShape(playerShape);
 		return resp;
 	}
-
 }

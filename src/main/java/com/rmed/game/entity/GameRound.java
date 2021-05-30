@@ -12,6 +12,10 @@ import javax.persistence.ManyToOne;
 
 import io.swagger.annotations.ApiModel;
 
+/**
+ * @author Spagadala
+ * This class represents the domin/entity for storing the information of GameRound
+ */
 @Entity
 @ApiModel(value = "GameRound details", description = "Details of the Game round, includes playerId, shape, status of the game")
 public class GameRound implements Serializable {

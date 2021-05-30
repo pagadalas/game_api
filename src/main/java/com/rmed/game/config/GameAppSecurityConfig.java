@@ -5,7 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
- 
+
+/**
+ * This class represents the main Security configuration class for the game application
+ * This provides very basic auth (user/pwd) for all the requests.
+ *
+ * @author Spagadala
+  */
 @Configuration
 public class GameAppSecurityConfig extends WebSecurityConfigurerAdapter
 {

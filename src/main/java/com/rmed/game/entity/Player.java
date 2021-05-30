@@ -11,6 +11,10 @@ import javax.persistence.OneToMany;
 
 import io.swagger.annotations.ApiModel;
 
+/**
+ * This class represents the entity for Player object.
+ * This holds name of the player, and have association with GameRound entity
+ */
 @Entity
 @ApiModel(value = "Player details", description = "Details of the Player")
 public class Player implements Serializable {
